@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome</title>
+  <link rel="stylesheet" type="text/css" href="../css/style1.css">
+  <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
+</head>
+
+<body>
+  <h5 id="time" class="timer">60:00</h5>
+  <center>
+    <div id="textares" class="text">Heidi! Nous avons réussi à pirater le système de messagerie!<br> 
+                                  Nous l'utiliserons pour communiquer avec toi! (Amis de la résistance) <br>
+                                  Heidi! We managed to hack the messaging system! <br>
+                                  We will use it to communicate with you! (Friends of The Resistance)
+    </div>
+  </center>
+  <ul id="number" class="number">
+      <li id="li1">1</li>
+      <li id="li2">2</li>
+      <li id="li3">3</li>
+      <li id="li4">4</li>
+  </ul> 
+</body>
+  <script>
+    const { ipcRenderer } = require('electron')
+
+    var game_min = 60; 
+    var game_sec = 0;
+    var Inertval;
+    var tips = [];
+    var tik = 0;
+    
+  
+
+    ipcRenderer.on('/TipsWebDisplay/Text', (event, arg)=>{
+      tips[tik] = arg
+      tik ++
+      if(tik >=4){ tik = 0}
+      tik = tips.length
+      ChangeNumberTips()
+      console.log(tik)
+      // ChangeText(arg);
+    })
+    
+    ipcRenderer.on('/TipsWebDisplay/Time', (event, arg)=>{
+      if(arg == 'start'){
+        UpdateDate();
+      } else if(arg =='pause'){
+        Pause()
+      } 
+    })
+
+    ipcRenderer.on('Touch', (event, arg)=>{
+      if(arg == 'true'){
+        PushText()
+      }
+    })
+    
+    function game_time() {
+      if (game_sec == 0) {
+          if (game_min == 0) {
+
+          } else {
+              game_min--;
+              if (game_min < 10) game_min = '0' + game_min;
+              game_sec = 59;
+          }
+      } else {
+          game_sec--;
+          if (game_sec < 10) game_sec = '0' + game_sec;
+      }
+      document.getElementById("time").innerHTML = game_min + ":" + game_sec;
+    }
+    
+    function PushText(){
+      const CountTips = tik 
+
+      if(CountTips == 1){
+        change_li('li4');
+        change_text(tips[3]);
+        CountTips = 0;
+        tik = 0;
+        tips = [];
+      }
+      if(CountTips == 2){
+        change_li('li3');
+        change_text(tips[2]);
+        CountTips --;
+      }
+      if(CountTips == 3){
+        change_li('li2');
+        change_text(tips[1]);
+        CountTips --;
+      }
+      if(CountTips == 4){
+        change_li('li1');
+        change_text(tips[0]);
+        CountTips --;
+      }
+    }
+
+    function UpdateDate(){
+      Inertval = setInterval(game_time, 1000);
+    }
+    function Pause(){
+      console.log('Time in diaplay: '+game_min+':'+game_sec)
+      clearTimeout(Inertval)
+    }
+
+    function ChangeText(data){
+      document.getElementById('textares').innerHTML = data;
+    }
+
+    function ChangeNumberTips(){
+      if(tik == 1){
+    	change_li1('li1');
+      }
+      if(tik == 2){
+        change_li1('li1');
+        change_li1('li2');
+      }
+      if(tik == 3){
+        change_li1('li1');
+        change_li1('li2');
+        change_li1('li3');
+      }
+      if(tik == 4){
+        change_li1('li1');
+        change_li1('li2');
+        change_li1('li3');
+        change_li1('li4');
+      }
+    }
+    function change_li(data) {
+      const myEl = document.getElementById(data);
+      myEl.style.opacity = '0.5';	
+    }
+
+    function change_li1(data){
+      const myEl = document.getElementById(data);
+      myEl.style.opacity = '1';
+    }
+
+
+  </script>  
+</html>
