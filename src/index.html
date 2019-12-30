@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link href="http://vjs.zencdn.net/7.3.0/video-js.min.css" rel="stylesheet">
+    <script src="http://vjs.zencdn.net/7.3.0/video.min.js"></script>
+    <link rel="stylesheet" href="../css/style1.css">
+  </head>
+  <body>
+
+    <video 
+      id="my-player" 
+      class="video-js"  
+      poster="../video/screensaver.png"
+      width="1920"
+      height="1080" 
+      data-setup='{}'>
+      <source src="../video/schlafendorm_intro.mp4" type="video/mp4"></source>
+    </video>
+    
+  </body>
+
+  <script>
+    const { ipcRenderer } = require('electron')
+    const tipe = "fe67c31f";
+    var myPlayer = videojs('my-player', {
+      controls: true,
+      autoplay: false,
+      preload: 'auto'
+    })
+
+    ipcRenderer.on('Player', (event, arg) => {
+      var msg = arg.toString()
+      if (msg === "play"){
+        myPlayer.enterFullWindow()
+        myPlayer.play()
+        console.log(myPlayer.supportsFullScreen())
+        console.log('ok')
+      }
+    })
+  
+  </script>  
+</html>
